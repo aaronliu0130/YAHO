@@ -12,8 +12,16 @@ YAHO `source file`  `target file`  `options`
 
 YAHO `源代码` `目标文件` `设置`
 ### 设置 Options:
-`-k`             don't generate waste but add spaghetti numbers                                卡常数模式（让每个数字变得乱七八糟，但不会添加其他的垃圾代码）
+```
+[-k]             don't generate waste but add spaghetti numbers                                卡常数模式（让每个数字变得乱七八糟，但不会添加其他的垃圾代码）
 
-`-s` `swm`    super mode (Spaghetti Code Multiplier+swm,defaulted to +2)            超级模式（随机加花代码+swm，默认+2）
+[-s swm]    super mode (Spaghetti Code Multiplier+swm, defaulted to +2)            超级模式（随机加花代码+swm，默认+2）
 
-`-ne`           only remove comments and line numbers                                            不添加随机加花代码
+[-ne][--no-eval]					don't generate spaghetti numbers but add waste                        不卡常数，但添加垃圾代码
+
+[-cl]								only remove comments and line numbers								  不添加随机加花代码
+
+[-d][--debug]						debug mode with process and argument information                      输出微妙的运行程度与数据
+
+[-h][--help]						brings up this screen with usage and options						  输出程序语法
+```
