@@ -1,38 +1,26 @@
-//yaho release 4.0
+//yaho release 5.0
 #include <iostream>
 #include <cstdio>
-#ifdef __APPLE__
+#include <string>
+#include <cstring>
+#ifdef __linux__
 #include <memory>
 #include <stdexcept>
-#include <string>
 #include <array>
-std::string exec(const char* cmd) {
-    std::array<char, 128> buffer;
-    std::string result;
-    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
-    if (!pipe) {
-        throw std::runtime_error("popen() failed!");
-    }
-    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
-        result += buffer.data();
-    }
-    return result;
-}
 #endif
 using namespace std;
 bool debug = false;
+
 //args
 bool kcs(0), nev(0);
 int wnm = 3;
-
 int mapp = 0;
 bool ext,typ = false;
+
+//waste generation
 const string opr = "+-";
 const string apha = "abcdefghijklmnopqrstuvwxyzl";
 const string aval = "11234567895";
-//waste gen
-//----------------------------------- 
-
 string wstdim() {
 	string s,nam,val;
 	for (int i=1; i<=3+rand()%12; i++)
@@ -91,21 +79,9 @@ string wstexp() {
 
 	return s;
 }
-//~wstgen
-//string del(string s){
-//	int i=0;
-//	while(i < s.length() && s[i] != ' ') i++;
-//	if (s[i] == ' '){
-//		for (int j = i+1;j<s.length();j++)
-//			s[i] = s[i+1];
-//		s = del(s);
-//	}
-//	return s;
-//}
-//------------------------------------------------------ 
 
 //encoding
-string dspl(string s,int sd){ //beta
+string dspl(string s,int sd){ 
 	for (int i=1;i<=sd;i++) s = s + opr[rand()%2] + wstexp();
 	return s;
 }
@@ -127,7 +103,6 @@ string eval(string s){
 	k = s.substr(0,eq+1) + dspl(s.substr(eq+1,len-1),rand()%wnm) + s.substr(eq+len,s.length()-(eq+len)+1);
 	return k;
 }
-//------------------------------------
 
 void wstgen(int a,int b,int c) {
 	for (int i=1; i<=rand()%a; i++) cout<<(nev?wstdim():eval(wstdim()));
@@ -176,8 +151,9 @@ bool wchk(string s) {
 	if (mapp == 0) typ = false;
 	int len = s.length();
 	int hd = 0;while(s[hd] == ' ') hd++;
-	//if(debug)cerr<<typ<<endl;
-	//if(debug)cerr<<s[hd+0]<<s[hd+1]<<s[hd+2]<<s[hd+3]<<s[hd+4]<<s[hd+5]<<endl;
+	if(debug)cerr<<"Checking";
+	if(debug)cerr<<typ<<endl;
+	if(debug)cerr<<s[hd+0]<<s[hd+1]<<s[hd+2]<<s[hd+3]<<s[hd+4]<<s[hd+5]<<endl;
 	if (s[hd+0] == 'c' && s[hd+1] == 'l' && s[hd+2] == 'a' && s[hd+3] == 's' && s[hd+4] == 's') typ = true;
 	if (s[hd+0] == 's' && s[hd+1] == 't' && s[hd+2] == 'r' && s[hd+3] == 'u' && s[hd+4] == 'c' && s[hd+5] == 't') typ = true;
 	for (int i=0; i<len; i++) {
@@ -199,14 +175,14 @@ int main(int argc,char **argv) {
 	if (argc < 3) {
 		if(!strcmp(argv[0],"-h")){
 			cerr<<R"(
-Yet Another Helper for Olers
+Yet Another Helper for trOllers
 
 语法 Usage:
 YAHO <source file> <target file> [options]
 YAHO <源代码> <目标文件> [设置]
 
 设置 Options:
-[-k][--kcs] 						don't generate waste but add spaghetti numbers                        卡常数模式（不添加随机变量）
+[-k][--kcs] 						don't generate waste but add spaghetti numbers                        卡常数模式（让每个数字变得乱七八糟，但不会添加其他的垃圾代码）
 
 [-s <swm>][--super <swm>]			super mode (Spaghetti Code Multiplier+swm,defaulted to +2)            超级模式（随机加花代码+swm，默认+2）
 
@@ -219,9 +195,9 @@ YAHO <源代码> <目标文件> [设置]
 [-h][--help]						brings up this screen with usage and options						  输出这个页面
 
 注意事项 Caveats:
-Currently if you're on macOS or linux you need to put the clang-format/astyle folder in the same directory as where this executable is
+Currently you need to put the clang-format/astyle folder in the same directory as where this executable is
 being executed from.
-目前，如果您在macOS或Linux上，您需要将clang-format或astyle文件夹放在与执行此可执行文件的目录相同的目录中。)";
+目前您需要将clang-format或astyle文件夹放在与执行此可执行文件的目录相同的目录中。)";
 			return 0;
 		}
 		cerr<<"Not enough arguments."<<endl;
@@ -289,9 +265,8 @@ being executed from.
 	if(debug)system("cd .. && make -d && cd bin");
 	else system("cd .. && make && cd bin");
 #endif
-#endif
 end:
 	system(t.c_str());
-	cerr<<"All Done,Have Fun!"<<endl;
+	cerr<<"All Done, Have Fun!"<<endl;
 return 0;
 }
