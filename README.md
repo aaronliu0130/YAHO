@@ -1,4 +1,4 @@
-# YAHO, **Y**et **A**nother **H**elper for **O**Iers
+# YAHO, **Y**et **A**nother **H**elper for tr**O**IIers
 # 声明 Disclaimer:
 I, @aaronliu0130, the owner of this fork, does not encourage code cheating in any way. This fork was created for code-trolling, not cheating. Some of this was borrowed from the original version of this repository, which is why you might find certain suggestive themes.
 
