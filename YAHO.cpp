@@ -1,8 +1,8 @@
-//yaho release 5.0
 #include <iostream>
 #include <cstdio>
 #include <string>
 #include <cstring>
+#include <ctime>
 #ifdef __linux__
 #include <memory>
 #include <stdexcept>
@@ -10,14 +10,10 @@
 #endif
 using namespace std;
 bool debug = false;
-
-//args
 bool kcs(0), nev(0);
 int wnm = 3;
 int mapp = 0;
 bool ext,typ = false;
-
-//waste generation
 const string opr = "+-";
 const string apha = "abcdefghijklmnopqrstuvwxyzl";
 const string aval = "11234567895";
@@ -80,7 +76,6 @@ string wstexp() {
 	return s;
 }
 
-//encoding
 string dspl(string s,int sd){ 
 	for (int i=1;i<=sd;i++) s = s + opr[rand()%2] + wstexp();
 	return s;
@@ -97,7 +92,7 @@ string eval(string s){
 		else if (s[eq+len] == ')' || s[eq+len] == ';')
 			depth--;
 	}
-	//cout<<eq<<' '<<len<<endl;
+	if(debug)cerr<<eq<<' '<<len<<endl;
 	string k;
 	if(debug)cerr<<"encoding "+s.substr(eq+1,len-1)+" ..."<<endl;
 	k = s.substr(0,eq+1) + dspl(s.substr(eq+1,len-1),rand()%wnm) + s.substr(eq+len,s.length()-(eq+len)+1);
@@ -110,7 +105,6 @@ void wstgen(int a,int b,int c) {
 	for (int i=1; i<=rand()%c; i++) cout<<(nev?wstif():eval(wstif()));
 }
 
-//simplify
 string chkhead(string a) {
 	int x = 0;
 	while (!((a[x]>='A' && a[x]<='Z') || (a[x]>='a' && a[x]<='z') || a[x] == '_' || a[x] == '#' || a[x] == '{' \
@@ -137,7 +131,6 @@ string chkrem(string a) {
 			a[i] = ' ';
 		}
 	}
-
 	return a;
 }
 
@@ -167,14 +160,11 @@ bool wchk(string s) {
 	}
 	return true;
 }
-//-----------------------------------------------
-
 
 int main(int argc,char **argv) {
 	srand((unsigned)time(NULL));
 	if (argc < 3) {
-		if(!strcmp(argv[0],"-h")){
-			cerr<<R"(
+		cerr<<R"(
 Yet Another Helper for trOllers
 
 语法 Usage:
@@ -182,22 +172,27 @@ YAHO <source file> <target file> [options]
 YAHO <源代码> <目标文件> [设置]
 
 设置 Options:
-[-k][--kcs] 						don't generate waste but add spaghetti numbers                        卡常数模式（让每个数字变得乱七八糟，但不会添加其他的垃圾代码）
+[-k][--kcs] 						don't generate waste but add spaghetti numbers						卡常数模式（让每个数字变得乱七八糟，但不会添加其他的垃圾代码）
 
-[-s <swm>][--super <swm>]			super mode (Spaghetti Code Multiplier+swm,defaulted to +2)            超级模式（随机加花代码+swm，默认+2）
+[-s <swm>][--super <swm>]			super mode (Spaghetti Code Multiplier+swm,defaulted to +2)			超级模式（随机加花代码+swm，默认+2）
 
-[-ne][--no-eval]					don't generate spaghetti numbers but add waste                        不将常数（-INT_MAX~INT_MAX）加花
+[-ne][--no-eval]					don't generate spaghetti numbers but add waste						不将常数（-INT_MAX~INT_MAX）加花
 
-[-cl]								only remove comments and line numbers								  不添加随机加花代码
+[-cl]								only remove comments and line numbers								不添加随机加花代码
 
-[-d][--debug]						debug mode with process and argument information                      输出微妙的运行程度与数据
+[-d][--debug]						debug mode with process and argument information					输出微妙的运行程度与数据
 
-[-h][--help]						brings up this screen with usage and options						  输出这个页面
+[-b <binary>]						specify the binary for formatting									指明用来美化程序的可执行文件
+
+[-h][--help]						brings up this screen with usage and options						输出这个页面
 
 注意事项 Caveats:
-Currently you need to put the clang-format/astyle folder in the same directory as where this executable is
+1. Currently, if you don't specify the formatter, you need to put the bin folder in the same directory as where this executable is
 being executed from.
-目前您需要将clang-format或astyle文件夹放在与执行此可执行文件的目录相同的目录中。)";
+2. This program is not verbose.
+1. 目前如果您要使用默认程序美化可执行文件的话，您需要将bin文件夹放在与执行此可执行文件的目录相同的目录中。
+2. 这个程序缺乏鲁棒性)";
+		if(!strcmp(argv[0],"-h")){
 			return 0;
 		}
 		cerr<<"Not enough arguments."<<endl;
@@ -205,7 +200,7 @@ being executed from.
 	}
 	freopen(argv[1],"r",stdin);
 	freopen(argv[2],"w",stdout);
-
+	string t;
 	if (argc >= 4) {
 		for (int i=4; i<=argc; i++) {
 			if (!strcmp(argv[i-1],"-k")||!strcmp(argv[i-1],"--kcs")) {
@@ -213,7 +208,7 @@ being executed from.
 				cerr<<"Running in KCS Mode."<<endl;
 			} else if (!strcmp(argv[i-1],"-s")||!strcmp(argv[i-1],"--super")) {
 				int wplus = *argv[i]-'0';
-                if(wplus>=0&&wplus<=9)wnm += *argv[i]-'0';
+                if(wplus>=0&&wplus<=9)wnm += wplus;
                 else wnm+=2;
 				cerr<<"Running in Super Mode with number of wastes "<<wnm<<"."<<endl;
 			}else if (!strcmp(argv[i-1],"-ne")||!strcmp(argv[i-1],"--no-eval")) {
@@ -224,8 +219,10 @@ being executed from.
                 cerr<<"Running in No-Comment-LineNo Only Mode."<<endl;
             }else if (!strcmp(argv[i-1],"-d")||!strcmp(argv[i-1],"--debug")){
             	debug = true;
-            	cerr<<"Runnig with debugging info."<<endl;
-            }
+            	cerr<<"Running with debugging info."<<endl;
+            }else if (!strcmp(argv[i-1],"-b")){
+
+			}
 		}
 	}
 	if(debug)cerr<<"Number of arguments: "<<argc<<endl;
@@ -236,36 +233,21 @@ being executed from.
 			s = chkhead(s);
 			s = chkrem(s);
 			if (!nev) s = eval(s);
-			//s = del(s);
 		}
 		cout<<s<<endl;
 		ext = wchk(s);
 		if (mapp>0 && ext && !kcs && !typ && debug) cerr<<"genarating waste...\n";
 		if (mapp > 0 && ext && !kcs && !typ) wstgen(wnm,wnm,wnm);
-		//cout<<"*********"<<mapp<<"**********"<<endl;
+		if(debug)cerr<<"*********"<<mapp<<"**********"<<endl;
 	}
 	fclose(stdin);
 	fclose(stdout);
-	cerr<<"Calling Astyle/clang-format..."<<endl;
+	cerr<<"Calling formatter..."<<endl;
 #ifdef __WIN32__
-	string t = string("astyle\\bin\\astyle.exe ") + argv[2];
+	t = string("bin\\astyle.exe ") + argv[2];
 #else
-#ifdef __APPLE__
-	string t = string("./clang-format/bin/clang-format -i ") + argv[2];
-#else
-#include <sys/stat.h>
-#include <unistd.h>
-#include <string>
-#include <fstream>
-	string t = string("./astyle ") + argv[2];
-	struct stat buffer;
-	system("cd astyle/build/gcc/bin")
-	if(!stat("astyle", &buffer))goto end;
-	cerr<<"Please wait while we build AStyle!"<<endl;
-	if(debug)system("cd .. && make -d && cd bin");
-	else system("cd .. && make && cd bin");
+	t = string("./bin/astyle") + argv[2];
 #endif
-end:
 	system(t.c_str());
 	cerr<<"All Done, Have Fun!"<<endl;
 return 0;
